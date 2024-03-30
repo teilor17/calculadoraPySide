@@ -36,23 +36,23 @@ class Calculadora(QMainWindow):
         layout_botones = QGridLayout()
         # Texto | Posicion en el grid layout
         self.botones = {
-            '7':(0,0),
-            '8':(0,1),
-            '9':(0,2),
-            '/':(0,3),
-            '4':(1,0),
-            '5':(1,1),
-            '6':(1,2),
-            '*':(1,3),
-            '1':(2,0),
-            '2':(2,1),
-            '3':(2,2),
-            '-':(2,3),
-            '0':(3,0),
-            '.':(3,1),
-            'C':(3,2),
-            '+':(3,3),
-            '=':(3,4)
+            '7': (0, 0),
+            '8': (0, 1),
+            '9': (0, 2),
+            '/': (0, 3),
+            '4': (1, 0),
+            '5': (1, 1),
+            '6': (1, 2),
+            '*': (1, 3),
+            '1': (2, 0),
+            '2': (2, 1),
+            '3': (2, 2),
+            '-': (2, 3),
+            '0': (3, 0),
+            '.': (3, 1),
+            'C': (3, 2),
+            '+': (3, 3),
+            '=': (3, 4)
         }
 
         # Creamos los botones y los agregamos al grid layout
@@ -71,6 +71,9 @@ class Calculadora(QMainWindow):
             if texto_boton not in {'=','C'}:
                 # boton.clicked.connect(lambda: self._construir_expresion(texto_boton))
                 boton.clicked.connect(partial(self._construir_expresion, texto_boton))
+            self.botones['C'].clicked.connect(self._limpiar_linea_entrada)
+            self.botones['='].clicked.connect(self._calcular_resultado)
+            self.linea_entrada.returnPressed.connect(self._calcular_resultado)
 
     def _construir_expresion(self, texto_boton):
         expresion = self.obtener_texto() + texto_boton
@@ -86,6 +89,17 @@ class Calculadora(QMainWindow):
 
     def _limpiar_linea_entrada(self):
         self.actualizar_texto('')
+
+    def _calcular_resultado(self):
+        resultado = self._evaluar_expresion(self.obtener_texto())
+        self.actualizar_texto(resultado)
+
+    def _evaluar_expresion(self,expresion):
+        try:
+            resultado = str(eval(expresion))
+        except Exception as e:
+            resultado = 'Ocurrio un error'
+        return resultado
 
 if __name__ == '__main__':
     app = QApplication()
