@@ -1,3 +1,5 @@
+from functools import partial
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QLineEdit, QGridLayout, QPushButton
 
@@ -15,6 +17,7 @@ class Calculadora(QMainWindow):
         # Metodos para crear la parte visual de la calculadora
         self._crear_area_captura()
         self._crear_botone()
+        self._conectar_botones()
 
     def _crear_area_captura(self):
         self.linea_entrada = QLineEdit()
@@ -30,7 +33,7 @@ class Calculadora(QMainWindow):
         self.botonoes = {}
         layout_botones = QGridLayout()
         #texto y posicion en el grid layout
-        botones = {
+        self.botones = {
             '7': (0, 0),
             '8': (0, 1),
             '9': (0, 2),
@@ -51,13 +54,22 @@ class Calculadora(QMainWindow):
         }
         #creamos los botones y los agregamos al layot
         #la posicion es una tuple con valores
-        for text_boton, posicion in botones.items():
+        for text_boton, posicion in self.botones.items():
             self.botonoes[text_boton] = QPushButton(text_boton)
             self.botonoes[text_boton].setFixedSize(40, 40)
             #publicar botones
             layout_botones.addWidget(self.botonoes[text_boton], posicion[0], posicion[1])
         #agergamos el layout de bootones al principal
         self.layout_principal.addLayout(layout_botones)
+
+    def conectar_botones(self):
+        for text_boton, boton in self.botones.items():
+            if text_boton not  in {'=','C'}:
+                #boton.clicked.connect(lambda: self._construir_exprecion(text_boton))
+                boton.clicked.connect(partial(self._construir_exprecion, text_boton))
+
+
+
 
 
 
